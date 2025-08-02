@@ -7,20 +7,7 @@
         "url": "",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": ""
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "name": "Accept",
-              "value": "image/png"
-            }
-          ]
+          
         },
         "sendBody": true,
         "specifyBody": "json",
@@ -60,7 +47,7 @@
           "value": "13buYtFyVGyMTTnlfcNMKM1i3XAeKzhVa",
           "mode": "list",
           "cachedResultName": "N8N generated images",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/13buYtFyVGyMTTnlfcNMKM1i3XAeKzhVa"
+          "cachedResultUrl": ""
         },
         "options": {}
       },
