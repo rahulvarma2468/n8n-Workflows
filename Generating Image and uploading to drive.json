@@ -10,7 +10,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer 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"
+              "value": ""
             },
             {
               "name": "Content-Type",
