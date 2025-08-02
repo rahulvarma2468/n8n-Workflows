@@ -1,0 +1,119 @@
+{
+  "name": "Generating Image and uploading to drive",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "image/png"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"inputs\": \"\\\"Prabhas as a dinosaur\\\"\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -272,
+        -32
+      ],
+      "id": "1c4623ee-1d4a-410f-a4ed-4046b1a05960",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -32
+      ],
+      "id": "b50f66eb-b62b-48a9-9422-269ebcc46b5c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "name": "Gen pics",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "13buYtFyVGyMTTnlfcNMKM1i3XAeKzhVa",
+          "mode": "list",
+          "cachedResultName": "N8N generated images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/13buYtFyVGyMTTnlfcNMKM1i3XAeKzhVa"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        80,
+        -32
+      ],
+      "id": "cfc2558b-eaed-40e2-af78-d565b746dc99",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EvMmY29QaQ63vYS8",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "30082be5-054e-4be0-888e-7d458efd3813",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c468e033b0a422cd7f467d206a054d979feb7b12d76832cae9f9f19172f3779a"
+  },
+  "id": "aJDLRMZkXHMPRdS0",
+  "tags": []
+}

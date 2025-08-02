@@ -1,0 +1,466 @@
+{
+  "name": "Generating Ai videos and Adding to Sheets",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -128
+      ],
+      "id": "57811c52-175b-4eb3-8b96-44d1663937cb",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "bible character",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a AI designed to create a veo 3 text to video prompt to generate a viral social media video based on the theme you are given. The prompt should describe one camera shot that is 8 seconds long. Include that the camera shot is being done on a selfie stick held by the character. There should only be one main character give a random name similar to the example \n\n\nHere is an example prompt \nA cinematic shot of Chris (28 year old male, large muscles, toned, athletic, wearing a sleeveless shirt) filming a selfie video shot in an empty zoo habitat. Chris emotionally Yells I broke into the zoo to prove you can Play with the penguins. Camera quick action pans to a bunch of penguins playing and looking cute.\n\nMake sure that the length of your output is similar to the example. Have one sentence start with character name says followed by a sentence of dialogue.   "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -96,
+        -128
+      ],
+      "id": "047d0ce0-deac-4dc9-94e7-3fa618be16c5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        64
+      ],
+      "id": "206297f3-d09b-4141-84e6-5d58c07dedda",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7Xh2R2Cq8q71mTo2",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1onyEeh3LXAPyw2G-MOI2DERCjSLSvPaJ5zaM6lGxY4U",
+          "mode": "list",
+          "cachedResultName": "Veo3 video ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1onyEeh3LXAPyw2G-MOI2DERCjSLSvPaJ5zaM6lGxY4U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1onyEeh3LXAPyw2G-MOI2DERCjSLSvPaJ5zaM6lGxY4U/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video prompts": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "Video prompts"
+          ],
+          "schema": [
+            {
+              "id": "Video prompts",
+              "displayName": "Video prompts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        288,
+        -208
+      ],
+      "id": "325ac707-ff9b-4f74-8296-abb85017a858",
+      "name": "Add To Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "52I0K8kxrcH3GAPX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.replicate.com/v1/models/google/veo-3/predictions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input.prompt",
+              "value": "={{ $json['Prompt'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        -208
+      ],
+      "id": "e137b24f-f3f4-41d1-b234-8bee10e6ffef",
+      "name": "Create Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QgPFgMhYPWq8s6E5",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        64
+      ],
+      "id": "b7bd3d8f-49b3-4778-91b7-37a4a6a753f3",
+      "name": "Wait",
+      "webhookId": "795b6581-9efc-4610-8dfc-1e4e3d4ba929"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls.get }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        64
+      ],
+      "id": "0cec3715-edbc-4e6f-af58-aa7926031ed4",
+      "name": "Get Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QgPFgMhYPWq8s6E5",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1onyEeh3LXAPyw2G-MOI2DERCjSLSvPaJ5zaM6lGxY4U",
+          "mode": "list",
+          "cachedResultName": "Veo3 video ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1onyEeh3LXAPyw2G-MOI2DERCjSLSvPaJ5zaM6lGxY4U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1onyEeh3LXAPyw2G-MOI2DERCjSLSvPaJ5zaM6lGxY4U/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        -208
+      ],
+      "id": "b759bb18-6779-4421-adf8-5c25d1a0222f",
+      "name": "Get Video Idea",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "52I0K8kxrcH3GAPX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4e8f983a-3b1e-4370-9b58-9ffb56dcff4c",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "succeeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        64
+      ],
+      "id": "98876d79-8c45-45d6-9760-bd4e90d4b29c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1o8Fg2zqlRi4vZmiWWPwXUkoGYbsoSaeiVK4CqMJPqzY",
+          "mode": "list",
+          "cachedResultName": "Veo3 Video Generation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o8Fg2zqlRi4vZmiWWPwXUkoGYbsoSaeiVK4CqMJPqzY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o8Fg2zqlRi4vZmiWWPwXUkoGYbsoSaeiVK4CqMJPqzY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get Video Idea').item.json.row_number }}",
+            "Status": "done",
+            "URL": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Prompt ",
+              "displayName": "Prompt ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        912,
+        32
+      ],
+      "id": "3f4fd665-a38d-47cb-8aeb-b7ec136ff1f2",
+      "name": "Add Video To Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "52I0K8kxrcH3GAPX",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "AI Agent": [
+      {
+        "json": {
+          "output": "A cinematic shot of Elijah (30 year old male, rugged beard, athletic, dressed in traditional flowing robes) filming a selfie video shot on the rocky slopes of a mountain. Elijah says excitedly, \"I'm calling down fire from heaven to light up the sacrifice!\" Camera quick action pans to the sky as dramatic flames roar and descend, illuminating the scene with a divine glow."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Add To Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add To Sheet": {
+      "main": [
+        [
+          {
+            "node": "Get Video Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Idea": {
+      "main": [
+        [
+          {
+            "node": "Create Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Add Video To Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "653e7203-85c2-4844-98af-e5be3dccc029",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c468e033b0a422cd7f467d206a054d979feb7b12d76832cae9f9f19172f3779a"
+  },
+  "id": "eRGvrTWZNgrLkgZU",
+  "tags": []
+}
